@@ -1,3 +1,3 @@
 
-from EngineClassifier.TTCDehazeNet import *
+from EngineClassifier.TriDNet import *
 from EngineClassifier.HazeClassifiers import *
