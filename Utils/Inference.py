@@ -64,6 +64,9 @@ def multiple_model_inference(model_name, image_path, multiple_inference = False)
 
 def multiple_inference(test_path, model_names):
     # print(f'Inside the multiple_inference function.')
+    if not model_names:
+        raise ValueError('model_names must contain at least one model name.')
+
     class_folders = os.listdir(test_path)
     predictions = []
     actual_labels = []
@@ -74,13 +77,19 @@ def multiple_inference(test_path, model_names):
             for image_file in os.listdir(class_folder_path):
                 image_path = os.path.join(class_folder_path, image_file)
                 if os.path.isfile(image_path):
-                    predicted_class, probability = Utils.multiple_model_inference(model_names[0], image_path, multiple_inference = True)
-                    model_1_output = (predicted_class, probability)
-                    predicted_class, probability = Utils.multiple_model_inference(model_names[1], image_path, multiple_inference = True)
-                    model_2_output = (predicted_class, probability)
-                    predicted_class, probability = Utils.multiple_model_inference(model_names[2], image_path, multiple_inference = True)
-                    model_3_output = (predicted_class, probability)
-                    predicted_class_name = EngineClassifier.select_ensemble_output([model_1_output, model_2_output, model_3_output])
+                    model_outputs = []
+                    for model_name in model_names:
+                        predicted_class, probability = Utils.multiple_model_inference(
+                            model_name,
+                            image_path,
+                            multiple_inference=True,
+                        )
+                        model_outputs.append((predicted_class, probability))
+
+                    if len(model_outputs) == 1:
+                        predicted_class_name = model_outputs[0][0]
+                    else:
+                        predicted_class_name = EngineClassifier.select_ensemble_output(model_outputs)
 
                     # predicted_class_name = EngineClassifier.TriDNetInference(image_path, model_names,
                     #                                                               multiple_inference=True, actual_labels=class_folder)
