@@ -64,6 +64,9 @@ def multiple_model_inference(model_name, image_path, multiple_inference = False)
 
 def multiple_inference(test_path, model_names):
     # print(f'Inside the multiple_inference function.')
+    if not model_names:
+        raise ValueError('model_names must contain at least one model name.')
+
     class_folders = os.listdir(test_path)
     predictions = []
     actual_labels = []
@@ -74,15 +77,21 @@ def multiple_inference(test_path, model_names):
             for image_file in os.listdir(class_folder_path):
                 image_path = os.path.join(class_folder_path, image_file)
                 if os.path.isfile(image_path):
-                    predicted_class, probability = Utils.multiple_model_inference(model_names[0], image_path, multiple_inference = True)
-                    model_1_output = (predicted_class, probability)
-                    predicted_class, probability = Utils.multiple_model_inference(model_names[1], image_path, multiple_inference = True)
-                    model_2_output = (predicted_class, probability)
-                    predicted_class, probability = Utils.multiple_model_inference(model_names[2], image_path, multiple_inference = True)
-                    model_3_output = (predicted_class, probability)
-                    predicted_class_name = EngineClassifier.select_ensemble_output([model_1_output, model_2_output, model_3_output])
+                    model_outputs = []
+                    for model_name in model_names:
+                        predicted_class, probability = Utils.multiple_model_inference(
+                            model_name,
+                            image_path,
+                            multiple_inference=True,
+                        )
+                        model_outputs.append((predicted_class, probability))
 
-                    # predicted_class_name = EngineClassifier.TTCDehazeNetInference(image_path, model_names,
+                    if len(model_outputs) == 1:
+                        predicted_class_name = model_outputs[0][0]
+                    else:
+                        predicted_class_name = EngineClassifier.select_ensemble_output(model_outputs)
+
+                    # predicted_class_name = EngineClassifier.TriDNetInference(image_path, model_names,
                     #                                                               multiple_inference=True, actual_labels=class_folder)
 
                     # print(f'Predicted Class: {predicted_class_name} | Actual Class: {class_folder}')
@@ -236,8 +245,8 @@ selected_models = ['DenseNet201', 'ResNet152', 'ConvNextLarge']
 # Version 1: Use the predicted class from the Haze Classifier: USe 3 different models
 # Version 2: Use the predicted class from the Haze Classifier: Use only 1 model
 
-def TTCDehazeNet(version = None, gt_image = None, hazy_image = None, model_names = selected_models, dehazer = None):
-    # print(f'Inside the TTCDehazeNet function. 1')
+def TriDNet(version = None, gt_image = None, hazy_image = None, model_names = selected_models, dehazer = None):
+    # print(f'Inside the TriDNet function. 1')
 
     # Version 2: Use the predicted class from the Haze Classifier: Use only 1 model
     if version == 2:
@@ -250,7 +259,7 @@ def TTCDehazeNet(version = None, gt_image = None, hazy_image = None, model_names
     # Version 1: Use the predicted class from the Haze Classifier: USe 3 different models
     elif version == 1:
         if os.path.isfile(hazy_image):
-            final_class = EngineClassifier.TTCDehazeNetV1Inference(hazy_image, model_names)
+            final_class = EngineClassifier.TriDNetV1Inference(hazy_image, model_names)
             print(f'Final Class: {final_class}')
             single_dehaze_inference(dehazer, gt_image, hazy_image, predicted_class_name=final_class)
         elif os.path.isdir(hazy_image):
