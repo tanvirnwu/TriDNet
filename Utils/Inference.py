@@ -82,7 +82,7 @@ def multiple_inference(test_path, model_names):
                     model_3_output = (predicted_class, probability)
                     predicted_class_name = EngineClassifier.select_ensemble_output([model_1_output, model_2_output, model_3_output])
 
-                    # predicted_class_name = EngineClassifier.TTCDehazeNetInference(image_path, model_names,
+                    # predicted_class_name = EngineClassifier.TriDNetInference(image_path, model_names,
                     #                                                               multiple_inference=True, actual_labels=class_folder)
 
                     # print(f'Predicted Class: {predicted_class_name} | Actual Class: {class_folder}')
@@ -236,8 +236,8 @@ selected_models = ['DenseNet201', 'ResNet152', 'ConvNextLarge']
 # Version 1: Use the predicted class from the Haze Classifier: USe 3 different models
 # Version 2: Use the predicted class from the Haze Classifier: Use only 1 model
 
-def TTCDehazeNet(version = None, gt_image = None, hazy_image = None, model_names = selected_models, dehazer = None):
-    # print(f'Inside the TTCDehazeNet function. 1')
+def TriDNet(version = None, gt_image = None, hazy_image = None, model_names = selected_models, dehazer = None):
+    # print(f'Inside the TriDNet function. 1')
 
     # Version 2: Use the predicted class from the Haze Classifier: Use only 1 model
     if version == 2:
@@ -250,7 +250,7 @@ def TTCDehazeNet(version = None, gt_image = None, hazy_image = None, model_names
     # Version 1: Use the predicted class from the Haze Classifier: USe 3 different models
     elif version == 1:
         if os.path.isfile(hazy_image):
-            final_class = EngineClassifier.TTCDehazeNetV1Inference(hazy_image, model_names)
+            final_class = EngineClassifier.TriDNetV1Inference(hazy_image, model_names)
             print(f'Final Class: {final_class}')
             single_dehaze_inference(dehazer, gt_image, hazy_image, predicted_class_name=final_class)
         elif os.path.isdir(hazy_image):

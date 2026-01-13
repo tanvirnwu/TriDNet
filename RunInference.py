@@ -21,14 +21,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     single_parser = subparsers.add_parser(
         "single",
-        help="Run TTCDehazeNet on a single hazy image.",
+        help="Run TriDNet on a single hazy image.",
     )
     single_parser.add_argument(
         "--version",
         type=int,
         choices=[1, 2],
         required=True,
-        help="TTCDehazeNet version to run.",
+        help="TriDNet version to run.",
     )
     single_parser.add_argument(
         "--hazy-image",
@@ -88,7 +88,7 @@ def build_parser() -> argparse.ArgumentParser:
 def run_single(args: argparse.Namespace) -> None:
     dehazers = parse_csv_list(args.dehazers)
     model_names = parse_csv_list(args.models) or Utils.selected_models
-    Utils.TTCDehazeNet(
+    Utils.TriDNet(
         version=args.version,
         gt_image=args.gt_image,
         hazy_image=args.hazy_image,

@@ -82,7 +82,7 @@ def image_processing(image_path):
 
 
 # Main function to perform ensemble inference
-def TTCDehazeNetV1Inference(image_path, model_names, multiple_inference = False):
+def TriDNetV1Inference(image_path, model_names, multiple_inference = False):
 
     predicted_class, probability = Utils.multiple_model_inference(model_names[0], image_path, multiple_inference = multiple_inference)
     model_1_output = (predicted_class, probability)

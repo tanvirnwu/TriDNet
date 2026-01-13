@@ -8,7 +8,7 @@ This is our model, which can classify the haze type and also dehaze the model.
 
 Run inference through `RunInference.py`, which exposes subcommands for single-image, batch, and multi-image classification flows.
 
-### Single-image TTCDehazeNet
+### Single-image TriDNet
 
 ```bash
 python RunInference.py single \
