@@ -105,6 +105,12 @@ def multiple_inference(test_path, model_names):
     mcc = matthews_corrcoef(actual_labels, predictions)
     top1_accuracy = sum([1 for i, j in zip(actual_labels, predictions) if i == j]) / len(actual_labels)
 
+    precision_pct = round(precision * 100, 3)
+    recall_pct = round(recall * 100, 3)
+    f1_pct = round(f1 * 100, 3)
+    mcc_pct = round(mcc * 100, 3)
+    accuracy_pct = round(top1_accuracy * 100, 3)
+
     # Extract Test Dataset Name
     test_dataset_name = os.path.basename(os.path.normpath(test_path))
 
@@ -117,13 +123,16 @@ def multiple_inference(test_path, model_names):
     # Metrics for this run
     new_metrics = {
         "Test Dataset": test_dataset_name,
-        "Top-1 Accuracy": round(top1_accuracy, 2),
-        "Precision": round(precision, 2),
-        "Recall": round(recall, 2),
-        "F1 Score": round(f1, 2),
-        "MCC": round(mcc, 2)}
+        "Top-1 Accuracy": accuracy_pct,
+        "Precision": precision_pct,
+        "Recall": recall_pct,
+        "F1 Score": f1_pct,
+        "MCC": mcc_pct}
 
-    print(f'Testset: {test_dataset_name} | Accuracy: {top1_accuracy} | Precision: {precision} | Recall: {recall} | F1 Score: {f1} | MCC: {mcc}')
+    print(
+        f'Testset: {test_dataset_name} | Accuracy: {accuracy_pct} | Precision: {precision_pct} | '
+        f'Recall: {recall_pct} | F1 Score: {f1_pct} | MCC: {mcc_pct}'
+    )
     # Convert new_metrics to a DataFrame
     new_metrics_df = pd.DataFrame([new_metrics])
 
