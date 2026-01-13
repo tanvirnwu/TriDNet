@@ -15,7 +15,7 @@ def get_class_name_from_index(index, test_path):
 def single_model_classification_inference(image_path, test_path = Utils.test_path_for_class_name, transform = Utils.val_test_transform):
     # Load the model
     model_name = 'ResNet152'
-    model_path = os.path.join(r'G:\TripDNet\Storage\Saved_Models', f'{model_name}.pth')
+    model_path = os.path.join(r'G:\TriDNet\Storage\Saved_Models', f'{model_name}.pth')
     model = EngineClassifier.ResNet152()
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.to(device)

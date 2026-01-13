@@ -74,7 +74,7 @@ def calculate_mse(gt_image_path, dehazed_image_path):
 
 def batch_dehaze_and_evaluate(dehazers:str, gt_folder, hazy_folder):
 
-    dehazer_model_path = os.path.join(r"G:\TripDNet\Storage\Saved_Models", f'{dehazers}.pth')
+    dehazer_model_path = os.path.join(r"G:\TriDNet\Storage\Saved_Models", f'{dehazers}.pth')
     model = Utils.load_model(dehazer_model_path)
 
     psnr_values = []
@@ -93,13 +93,13 @@ def batch_dehaze_and_evaluate(dehazers:str, gt_folder, hazy_folder):
         # Convert tensors to PIL images for evaluation
         transform = transforms.ToPILImage()
         dehazed_image = transform(dehazed_image_tensor.squeeze(0))
-        dehazed_image_path = os.path.join(r"G:\TripDNet\Storage\Batch Dehazed Images\Dehazed", hazy_image_filename)
+        dehazed_image_path = os.path.join(r"G:\TriDNet\Storage\Batch Dehazed Images\Dehazed", hazy_image_filename)
         dehazed_image.save(dehazed_image_path)
 
         print(f'original gt image: {gt_image_path}')
         # Calculate PSNR and SSIM
         resize_gt_image = Utils.transform_and_save_image(gt_image_path,
-                                                         r"G:\TripDNet\Storage\Batch Dehazed Images\GT", 512)
+                                                         r"G:\TriDNet\Storage\Batch Dehazed Images\GT", 512)
 
         print(f'GT IMage path: {resize_gt_image}')
         print(f'Dehazed Image path: {dehazed_image_path}')
