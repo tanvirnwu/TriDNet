@@ -22,7 +22,7 @@ def get_class_name_from_index(index):
 def multiple_model_inference(model_name, image_path, multiple_inference = False):
 
     # Load the model
-    model_path = os.path.join(r'G:\TripDNet\Storage\Saved_Models\ES Best Models 2', f'{model_name}.pth')
+    model_path = os.path.join(r'G:\TriDNet\Storage\Saved_Models\ES Best Models 2', f'{model_name}.pth')
 
     if model_name == 'ConvNextLarge':
         model = ConvNextLarge()
@@ -100,7 +100,7 @@ def multiple_inference(test_path, model_names):
     test_dataset_name = os.path.basename(os.path.normpath(test_path))
 
     # File path for CSV
-    csv_file_path = r'G:\TripDNet\Storage\Evaluation Metrics\Evaluation_Metrics_final.csv'
+    csv_file_path = r'G:\TriDNet\Storage\Evaluation Metrics\Evaluation_Metrics_final.csv'
 
     # Check if the file exists
     file_exists = os.path.isfile(csv_file_path)
@@ -128,7 +128,7 @@ def multiple_inference(test_path, model_names):
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
     plt.title('Confusion Matrix')
-    plt.savefig(r'G:\TripDNet\Storage\Confusion Matrix\\' + test_dataset_name + '_Confusion_Matrix_4.jpg')
+    plt.savefig(r'G:\TriDNet\Storage\Confusion Matrix\\' + test_dataset_name + '_Confusion_Matrix_4.jpg')
 
 
 
@@ -159,18 +159,18 @@ def single_dehaze_inference(dehazer_model_names, gt_image, hazy_image, predicted
     hazy_image_path = hazy_image
     if predicted_class_name == 'Cloud':
         dehazer_model_name = 'CloudDehazer_100_16_le-4_eph_44'
-        dehazer_model_path = os.path.join(r"G:\TripDNet\Storage\Saved_Models\Dehazers", f'{dehazer_model_names[0]}.pth')
+        dehazer_model_path = os.path.join(r"G:\TriDNet\Storage\Saved_Models\Dehazers", f'{dehazer_model_names[0]}.pth')
     elif predicted_class_name == 'EH':
         dehazer_model_name = 'EHDehazer_100_16_le-4_eph_44'
-        dehazer_model_path = os.path.join(r"G:\TripDNet\Storage\Saved_Models\Dehazers", f'{dehazer_model_names[1]}.pth')
+        dehazer_model_path = os.path.join(r"G:\TriDNet\Storage\Saved_Models\Dehazers", f'{dehazer_model_names[1]}.pth')
     elif predicted_class_name == 'Fog':
         dehazer_model_name = 'FogDehazer_100_16_le-4_eph_44'
-        dehazer_model_path = os.path.join(r"G:\TripDNet\Storage\Saved_Models\Dehazers", f'{dehazer_model_names[2]}.pth')
+        dehazer_model_path = os.path.join(r"G:\TriDNet\Storage\Saved_Models\Dehazers", f'{dehazer_model_names[2]}.pth')
     else:
         print(f'Please select a valid model name from the list: {predicted_class_name}')
 
     # dehazer_model_name = 'GD_Net'
-    # dehazer_model_path = os.path.join(r"G:\TripDNet\Storage\Saved_Models\Dehazers", f'{dehazer_model_name}.pth')
+    # dehazer_model_path = os.path.join(r"G:\TriDNet\Storage\Saved_Models\Dehazers", f'{dehazer_model_name}.pth')
 
 
     model = load_model(dehazer_model_path)
@@ -211,7 +211,7 @@ def single_dehaze_inference(dehazer_model_names, gt_image, hazy_image, predicted
 
     # Save the dehazed image
     dehazed_image_filename = os.path.basename(hazy_image_path).split('.')[0] + "_dehazed.jpg"
-    dehazed_image_path = os.path.join(r"G:\TripDNet\Storage\Dehazed Images", dehazed_image_filename)
+    dehazed_image_path = os.path.join(r"G:\TriDNet\Storage\Dehazed Images", dehazed_image_filename)
     dehazed_image.save(dehazed_image_path)
 
     if gt_image:
@@ -223,7 +223,7 @@ def single_dehaze_inference(dehazer_model_names, gt_image, hazy_image, predicted
         print(f'GT VS Dehazed Image | PSNR: {psnr} | SSIM of : {ssim}')
 
         # Calculate PSNR and SSIM
-        resize_gt_image = Utils.transform_and_save_image(gt_image_path, r"G:\TripDNet\Storage\Dehazed Images", 512)
+        resize_gt_image = Utils.transform_and_save_image(gt_image_path, r"G:\TriDNet\Storage\Dehazed Images", 512)
         psnr, ssim = Utils.calculate_psnr_ssim(resize_gt_image, dehazed_image_path)
         print(f'GT VS Dehazed Image | PSNR: {psnr} | SSIM of : {ssim}')
 

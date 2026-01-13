@@ -14,7 +14,7 @@ def parse_csv_list(value: Optional[str]) -> Optional[List[str]]:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Run TripDNet inference utilities."
+            "Run TriDNet inference utilities."
         )
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -124,3 +124,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# python RunInference.py multi --test-path "G:\TriDNet\Data\Test" --models ResNet152
