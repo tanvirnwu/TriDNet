@@ -5,7 +5,7 @@ test_path = r'G:\TripDNet\Data\RH Test 1'
 gt_image = r"G:\LightDehazeNet\Data\Train 1\EH\Train\GT\OOTSGT__43.jpg"
 hazy_image = r"G:\LightDehazeNet\Data\Train 1\EH\Train\Haze\OOTSEHL9_43.jpg"
 
-
+d
 gt_folder= r'G:\TripDNet\Data\Dehazer Testset\Cloud Test\GT'
 hazy_folder = r'G:\TripDNet\Data\Dehazer Testset\Cloud Test\Haze'
 
