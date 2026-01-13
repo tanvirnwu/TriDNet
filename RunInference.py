@@ -1,33 +1,126 @@
+import argparse
+from typing import List, Optional
+
 import Utils
 
-# ===== Inference =====
-test_path = r'G:\TripDNet\Data\RH Test 1'
-gt_image = r"G:\LightDehazeNet\Data\Train 1\EH\Train\GT\OOTSGT__43.jpg"
-hazy_image = r"G:\LightDehazeNet\Data\Train 1\EH\Train\Haze\OOTSEHL9_43.jpg"
 
-d
-gt_folder= r'G:\TripDNet\Data\Dehazer Testset\Cloud Test\GT'
-hazy_folder = r'G:\TripDNet\Data\Dehazer Testset\Cloud Test\Haze'
-
-# Version 1: Use the predicted class from the Haze Classifier: USe 3 different models
-# Version 2: Use the predicted class from the Haze Classifier: Use only 1 model
-dehazers =['LD_Net_Cloud', 'LD_Net_EH', 'LD_Net_Fog']
-Utils.TTCDehazeNet(version = 2, gt_image = gt_image, hazy_image = hazy_image, dehazer = dehazers)
-Utils.batch_dehaze_and_evaluate(dehazers='AllDehazer_LD_40_16_le-4_eph_35', gt_folder = gt_folder, hazy_folder = hazy_folder)
+def parse_csv_list(value: Optional[str]) -> Optional[List[str]]:
+    if value is None:
+        return None
+    items = [item.strip() for item in value.split(",")]
+    return [item for item in items if item]
 
 
-# selected_models = ['DenseNet201', 'ResNet152', 'ConvNextLarge']
-# test_path = r'G:\TTCDehazeNet\Data\RH Test 2'
-# Utils.multiple_inference(test_path, selected_models)
-# test_path = r'G:\TripDNet\Data\RH Test 3'
-# Utils.multiple_inference(test_path, selected_models)
-# test_path = r'G:\TripDNet\Data\Benchmarking Datasets\Set 1'
-# Utils.multiple_inference(test_path, selected_models)
-# test_path = r'G:\TripDNet\Data\Benchmarking Datasets\Set 2'
-# Utils.multiple_inference(test_path, selected_models)
-# test_path = r'G:\TripDNet\Data\Benchmarking Datasets\Set 3'
-# Utils.multiple_inference(test_path, selected_models)
-# test_path = r'G:\TripDNet\Data\Benchmarking Datasets\Set 4'
-# Utils.multiple_inference(test_path, selected_models)
-# test_path = r'G:\TripDNet\Data\Benchmarking Datasets\Set 5'
-# Utils.multiple_inference(test_path, selected_models)
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Run TripDNet inference utilities."
+        )
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    single_parser = subparsers.add_parser(
+        "single",
+        help="Run TTCDehazeNet on a single hazy image.",
+    )
+    single_parser.add_argument(
+        "--version",
+        type=int,
+        choices=[1, 2],
+        required=True,
+        help="TTCDehazeNet version to run.",
+    )
+    single_parser.add_argument(
+        "--hazy-image",
+        required=True,
+        help="Path to the hazy image.",
+    )
+    single_parser.add_argument(
+        "--gt-image",
+        help="Optional ground-truth image path.",
+    )
+    single_parser.add_argument(
+        "--dehazers",
+        help="Comma-separated dehazer model names.",
+    )
+    single_parser.add_argument(
+        "--models",
+        help="Comma-separated classifier model names (version 1 only).",
+    )
+
+    batch_parser = subparsers.add_parser(
+        "batch",
+        help="Run batch dehaze + evaluate.",
+    )
+    batch_parser.add_argument(
+        "--dehazer",
+        required=True,
+        help="Dehazer model name (e.g. AllDehazer_LD_40_16_le-4_eph_35).",
+    )
+    batch_parser.add_argument(
+        "--gt-folder",
+        required=True,
+        help="Folder containing ground-truth images.",
+    )
+    batch_parser.add_argument(
+        "--hazy-folder",
+        required=True,
+        help="Folder containing hazy images.",
+    )
+
+    multi_parser = subparsers.add_parser(
+        "multi",
+        help="Run haze classification over a folder of images.",
+    )
+    multi_parser.add_argument(
+        "--test-path",
+        required=True,
+        help="Folder path to run classification inference.",
+    )
+    multi_parser.add_argument(
+        "--models",
+        help="Comma-separated classifier model names.",
+    )
+
+    return parser
+
+
+def run_single(args: argparse.Namespace) -> None:
+    dehazers = parse_csv_list(args.dehazers)
+    model_names = parse_csv_list(args.models) or Utils.selected_models
+    Utils.TTCDehazeNet(
+        version=args.version,
+        gt_image=args.gt_image,
+        hazy_image=args.hazy_image,
+        model_names=model_names,
+        dehazer=dehazers,
+    )
+
+
+def run_batch(args: argparse.Namespace) -> None:
+    Utils.batch_dehaze_and_evaluate(
+        dehazers=args.dehazer,
+        gt_folder=args.gt_folder,
+        hazy_folder=args.hazy_folder,
+    )
+
+
+def run_multi(args: argparse.Namespace) -> None:
+    model_names = parse_csv_list(args.models) or Utils.selected_models
+    Utils.multiple_inference(args.test_path, model_names)
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parser.parse_args()
+
+    if args.command == "single":
+        run_single(args)
+    elif args.command == "batch":
+        run_batch(args)
+    elif args.command == "multi":
+        run_multi(args)
+
+
+if __name__ == "__main__":
+    main()
